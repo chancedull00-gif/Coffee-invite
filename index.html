@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Will you go for coffee with me?</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+        
+        .title {
+            font-family: 'Playfair Display', sans-serif;
+        }
+
+        .heart {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-rose-50 to-amber-50 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden" id="app">
+        
+        <!-- Step 1: Question -->
+        <div id="step1" class="p-8">
+            <div class="text-center">
+                <div class="inline-block text-6xl mb-6 heart">☕❤️</div>
+                <h1 class="title text-4xl font-bold text-rose-900 mb-8 leading-tight">
+                    Will you go for coffee with me?
+                </h1>
+                
+                <div class="flex gap-4 justify-center">
+                    <button onclick="selectYes()" 
+                            class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-medium py-6 rounded-2xl text-xl shadow-lg transition-all active:scale-95">
+                        YES
+                    </button>
+                    
+                    <button onclick="selectNo()" 
+                            class="flex-1 bg-gray-200 hover:bg-gray-300 font-medium py-6 rounded-2xl text-xl shadow-lg transition-all active:scale-95">
+                        NO
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Date & Time -->
+        <div id="step2" class="hidden p-8">
+            <div class="flex justify-between items-center mb-6">
+                <button onclick="goBackToStep1()" class="text-rose-600 font-medium">← Back</button>
+                <h2 class="text-2xl font-semibold text-rose-900">Pick a date &amp; time</h2>
+            </div>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-2">Date</label>
+                    <input type="date" id="dateInput" 
+                           class="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:border-rose-500 text-lg">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-2">Time</label>
+                    <input type="time" id="timeInput" 
+                           class="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:border-rose-500 text-lg">
+                </div>
+            </div>
+            
+            <button onclick="goToLocation()" 
+                    class="mt-8 w-full bg-rose-600 hover:bg-rose-700 text-white font-medium py-5 rounded-2xl text-lg shadow-lg transition-all active:scale-95">
+                Next → Pick Location
+            </button>
+        </div>
+
+        <!-- Step 3: Location -->
+        <div id="step3" class="hidden p-8">
+            <div class="flex justify-between items-center mb-6">
+                <button onclick="goBackToStep2()" class="text-rose-600 font-medium">← Back</button>
+                <h2 class="text-2xl font-semibold text-rose-900">Where should we meet?</h2>
+            </div>
+            
+            <div class="space-y-3">
+                <button onclick="selectLocation(this)" data-location="Starbucks - Inner Harbor"
+                        class="w-full text-left p-5 border-2 border-transparent hover:border-rose-200 rounded-2xl transition-all active:bg-rose-50">
+                    <div class="font-medium">Starbucks</div>
+                    <div class="text-sm text-gray-500">Inner Harbor</div>
+                </button>
+                
+                <button onclick="selectLocation(this)" data-location="Peet's Coffee - Fells Point"
+                        class="w-full text-left p-5 border-2 border-transparent hover:border-rose-200 rounded-2xl transition-all active:bg-rose-50">
+                    <div class="font-medium">Peet's Coffee</div>
+                    <div class="text-sm text-gray-500">Fells Point</div>
+                </button>
+                
+                <button onclick="selectLocation(this)" data-location="Local Cup"
+                        class="w-full text-left p-5 border-2 border-transparent hover:border-rose-200 rounded-2xl transition-all active:bg-rose-50">
+                    <div class="font-medium">Local Cup</div>
+                    <div class="text-sm text-gray-500">Downtown Baltimore</div>
+                </button>
+                
+                <div class="pt-4">
+                    <label class="block text-sm font-medium text-gray-600 mb-2">Or type your own suggestion</label>
+                    <input type="text" id="customLocation" placeholder="e.g. Blue Moon Cafe"
+                           class="w-full p-4 border border-gray-200 rounded-2xl focus:outline-none focus:border-rose-500">
+                </div>
+            </div>
+            
+            <button onclick="showSummary()" 
+                    class="mt-8 w-full bg-rose-600 hover:bg-rose-700 text-white font-medium py-5 rounded-2xl text-lg shadow-lg transition-all active:scale-95">
+                Continue → Summary
+            </button>
+        </div>
+
+        <!-- Summary -->
+        <div id="summary" class="hidden p-8">
+            <div class="flex justify-between items-center mb-8">
+                <button onclick="goBackToStep3()" class="text-rose-600 font-medium">← Back</button>
+                <h2 class="text-2xl font-semibold text-rose-900">Coffee Date Summary</h2>
+            </div>
+            
+            <div class="bg-rose-50 rounded-3xl p-6 space-y-6 mb-8">
+                <div class="flex gap-4">
+                    <div class="text-3xl">📅</div>
+                    <div>
+                        <div class="text-sm text-gray-500">When</div>
+                        <div id="summaryDate" class="font-medium text-lg"></div>
+                    </div>
+                </div>
+                
+                <div class="flex gap-4">
+                    <div class="text-3xl">📍</div>
+                    <div>
+                        <div class="text-sm text-gray-500">Where</div>
+                        <div id="summaryLocation" class="font-medium text-lg"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="space-y-4">
+                <button onclick="copyToClipboard()" 
+                        class="w-full bg-white border-2 border-rose-200 hover:border-rose-300 text-rose-700 font-medium py-5 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2">
+                    📋 Copy Details
+                </button>
+                
+                <a href="#" id="smsLink"
+                   class="block w-full bg-green-600 hover:bg-green-700 text-white font-medium py-5 rounded-2xl text-center transition-all active:scale-95">
+                    📱 Send to Chance (814-310-8872)
+                </a>
+            </div>
+            
+            <button onclick="resetApp()" 
+                    class="mt-6 w-full text-gray-500 text-sm underline">
+                Start Over
+            </button>
+        </div>
+    </div>
+
+    <!-- No Button Modal -->
+    <div id="noModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+        <div class="bg-white rounded-3xl p-8 max-w-xs w-full text-center">
+            <div class="text-5xl mb-4">😢</div>
+            <h3 class="text-2xl font-semibold mb-2">Nice try!</h3>
+            <p class="text-gray-600 mb-6">Only "Yes" is an acceptable answer for this one ❤️</p>
+            <button onclick="closeNoModal()" 
+                    class="w-full bg-rose-600 text-white py-4 rounded-2xl font-medium">
+                Try Again
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let selectedDate = '';
+        let selectedTime = '';
+        let selectedLocation = '';
+
+        function selectYes() {
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+            
+            // Set default date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const dateStr = tomorrow.toISOString().split('T')[0];
+            document.getElementById('dateInput').value = dateStr;
+            
+            // Default time 10:00 AM
+            document.getElementById('timeInput').value = '10:00';
+        }
+
+        function selectNo() {
+            document.getElementById('noModal').classList.remove('hidden');
+        }
+
+        function closeNoModal() {
+            document.getElementById('noModal').classList.add('hidden');
+        }
+
+        function goBackToStep1() {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+        }
+
+        function goToLocation() {
+            selectedDate = document.getElementById('dateInput').value;
+            selectedTime = document.getElementById('timeInput').value;
+            
+            if (!selectedDate || !selectedTime) {
+                alert("Please select both a date and time ☕");
+                return;
+            }
+            
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.remove('hidden');
+        }
+
+        function goBackToStep2() {
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+        }
+
+        function selectLocation(el) {
+            // Deselect all
+            document.querySelectorAll('#step3 button').forEach(btn => {
+                btn.classList.remove('border-rose-500', 'bg-rose-50');
+            });
+            // Select this one
+            el.classList.add('border-rose-500', 'bg-rose-50');
+            selectedLocation = el.getAttribute('data-location');
+        }
+
+        function showSummary() {
+            const customLoc = document.getElementById('customLocation').value.trim();
+            
+            if (customLoc) {
+                selectedLocation = customLoc;
+            } else if (!selectedLocation) {
+                alert("Please choose a location or type your own suggestion.");
+                return;
+            }
+            
+            // Format date nicely
+            const dateObj = new Date(selectedDate);
+            const options = { weekday: 'long', month: 'long', day: 'numeric' };
+            const formattedDate = dateObj.toLocaleDateString('en-US', options);
+            
+            document.getElementById('summaryDate').textContent = `${formattedDate} at ${selectedTime}`;
+            document.getElementById('summaryLocation').textContent = selectedLocation;
+            
+            // Update SMS link
+            const message = encodeURIComponent(
+                `Hey! I'd love to go for coffee with you ☕\n\n` +
+                `📅 When: ${formattedDate} at ${selectedTime}\n` +
+                `📍 Where: ${selectedLocation}\n\n` +
+                `Let me know if this works!`
+            );
+            
+            const smsLink = document.getElementById('smsLink');
+            smsLink.href = `sms:8143108872?body=${message}`;
+            
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('summary').classList.remove('hidden');
+        }
+
+        function goBackToStep3() {
+            document.getElementById('summary').classList.add('hidden');
+            document.getElementById('step3').classList.remove('hidden');
+        }
+
+        function copyToClipboard() {
+            const dateText = document.getElementById('summaryDate').textContent;
+            const locText = document.getElementById('summaryLocation').textContent;
+            
+            const text = `Coffee Date Proposal ☕\n\nWhen: ${dateText}\nWhere: ${locText}`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = event.target.innerHTML;
+                event.target.innerHTML = '✅ Copied!';
+                setTimeout(() => {
+                    event.target.innerHTML = originalText;
+                }, 2000);
+            });
+        }
+
+        function resetApp() {
+            // Reset everything
+            selectedDate = '';
+            selectedTime = '';
+            selectedLocation = '';
+            
+            // Clear inputs
+            document.getElementById('customLocation').value = '';
+            
+            // Hide all and show step 1
+            document.getElementById('summary').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+        }
+
+        // Tailwind script already loaded via CDN
+        console.log("%cCoffee Date App Ready ☕", "color: #e11d48; font-size: 14px; font-weight: bold");
+    </script>
+</body>
+</html>
