@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Quick Questionnaire</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #e6e9f0, #eef1f5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    max-width: 420px;
+    width: 90%;
+}
+
+h1 {
+    margin-bottom: 15px;
+}
+
+p {
+    margin-bottom: 15px;
+}
+
+button {
+    padding: 12px 25px;
+    margin: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.yes {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.no {
+    background-color: #b71c1c;
+    color: white;
+}
+
+.hidden {
+    display: none;
+}
+
+.error {
+    color: #b71c1c;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.success {
+    color: #2e7d32;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+input, select {
+    margin-top: 10px;
+    padding: 8px;
+    width: 100%;
+    font-size: 15px;
+}
+
+a {
+    display: inline-block;
+    margin-top: 12px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.small {
+    font-size: 13px;
+    color: #555;
+    margin-top: 10px;
+}
+
+hr {
+    margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<!-- TITLE PAGE -->
+<div id="pageTitle">
+    <h1>Hey Cayce</h1>
+    <p>
+        Hope this isn’t too extra. I just wanted to stand out from the other guys
+        in your DMs.
+    </p>
+    <button class="yes" onclick="goToCoffeeQuestion()">
+        Continue to questionnaire →
+    </button>
+</div>
+
+<!-- QUESTION 1 -->
+<div id="qCoffee" class="hidden">
+    <h1>Question 1</h1>
+    <p><strong>Do you like coffee?</strong></p>
+
+    <button class="yes" onclick="goToWalkQuestion()">Yes</button>
+    <button class="no" onclick="noClicked()">No</button>
+
+    <div class="error hidden">
+        ❌ That option is currently unavailable
+    </div>
+</div>
+
+<!-- QUESTION 2 -->
+<div id="qWalks" class="hidden">
+    <h1>Question 2</h1>
+    <p><strong>Do you like going for walks?</strong></p>
+
+    <button class="yes" onclick="goToInviteQuestion()">Yes</button>
+    <button class="no" onclick="noClicked()">No</button>
+
+    <div class="error hidden">
+        ❌ That option is currently unavailable
+    </div>
+</div>
+
+<!-- FINAL QUESTION -->
+<div id="qInvite" class="hidden">
+    <h1>One more question</h1>
+    <p><strong>Would you like to do both of those things together sometime?</strong></p>
+
+    <button class="yes" onclick="showDetails()">Yes</button>
+    <button class="no" onclick="noClicked()">No</button>
+
+    <div class="error hidden">
+        ❌ That option is currently unavailable
+    </div>
+</div>
+
+<!-- DETAILS -->
+<div id="details" class="hidden">
+
+    <h1>Perfect!</h1>
+
+    <p><strong>Pick a date & time ☕</strong></p>
+    <input type="datetime-local" id="dateTime">
+
+    <p><strong>Choose a location 📍</strong></p>
+    <select id="location" onchange="updateAll()">
+        <option value="">-- Select a coffee spot --</option>
+        <option value="Brigade Brew Coffee, Chambersburg PA">Brigade Brew Coffee</option>
+        <option value="Denim Coffee, Chambersburg PA">Denim Coffee</option>
+        <option value="Caffeinated Goat, Greencastle PA">Caffeinated Goat (Greencastle)</option>
+        <option value="Starbucks, Chambersburg PA">Starbucks (Chambersburg)</option>
+        <option value="Other">Other</option>
+    </select>
+
+    <input type="text" id="customLocation" placeholder="Enter coffee shop name">
+
+    <a id="mapsLink" target="_blank" class="hidden">
+        📍 Open in Google Maps
+    </a>
+
+    <button class="yes" onclick="copyInvite()">
+        📋 Copy invite text
+    </button>
+
+    <div id="copied" class="success hidden">
+        Copied to clipboard
+    </div>
+
+    <hr>
+
+    <p class="small">Prefer texting?</p>
+
+    <a href="sms:+18143108872" class="yes">
+        📱 Text me: 814-310-8872
+    </a>
+
+</div>
+
+</div>
+
+<script>
+function hideAll() {
+    document.querySelectorAll(".card > div").forEach(div => {
+        div.classList.add("hidden");
+    });
+}
+
+function goToCoffeeQuestion() {
+    hideAll();
+    document.getElementById("qCoffee").classList.remove("hidden");
+}
+
+function goToWalkQuestion() {
+    hideAll();
+    document.getElementById("qWalks").classList.remove("hidden");
+}
+
+function goToInviteQuestion() {
+    hideAll();
+    document.getElementById("qInvite").classList.remove("hidden");
+}
+
+function showDetails() {
+    hideAll();
+    document.getElementById("details").classList.remove("hidden");
+}
+
+function noClicked() {
+    document.querySelectorAll(".error").forEach(err => {
+        err.classList.remove("hidden");
+    });
+}
+
+function getPlace() {
+    const loc = document.getElementById("location").value;
+    const custom = document.getElementById("customLocation").value;
+    if (loc === "Other") return custom;
+    return loc;
+}
+
+function updateAll() {
+    const place = getPlace();
+    if (!place) return;
+
+    const mapsURL =
+        "https://www.google.com/maps/search/?api=1&query=" +
+        encodeURIComponent(place);
+
+    const link = document.getElementById("mapsLink");
+    link.href = mapsURL;
+    link.classList.remove("hidden");
+}
+
+document.getElementById("customLocation").addEventListener("input", updateAll);
+
+function copyInvite() {
+    const date = document.getElementById("dateTime").value;
+    const place = getPlace();
+
+    const mapsURL =
+        "https://www.google.com/maps/search/?api=1&query=" +
+        encodeURIComponent(place);
+
+    const text =
+`Want to do both sometime?
+
+When: ${date || "Not set"}
+Where: ${place || "Not set"}
+Map: ${mapsURL}
+
+Text me if that works for you.`;
+
+    navigator.clipboard.writeText(text).then(() => {
+        document.getElementById("copied").classList.remove("hidden");
+    });
+}
+</script>
+
+</body>
+</html>
